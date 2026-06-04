@@ -212,6 +212,13 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Vozila\Index.cshtml" />
+    <Content Include="Views\Vozila\Details.cshtml" />
+    <Content Include="Views\Vozila\Create.cshtml" />
+    <Content Include="Views\Vozila\Edit.cshtml" />
+    <Content Include="Views\Vozila\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

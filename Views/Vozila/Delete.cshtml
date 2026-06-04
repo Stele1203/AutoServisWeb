@@ -1,0 +1,22 @@
+﻿@model AutoServisWeb.Models.Vozila
+@{ ViewBag.Title = "Obrisi vozilo"; }
+
+<h2>Potvrda brisanja</h2>
+<hr />
+<p class="text-danger">Da li ste sigurni da zelite obrisati ovo vozilo?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">Marka i model</dt>
+    <dd class="col-sm-9">@(Model.Marke != null ? Model.Marke.NazivMarke : "") @Model.Model</dd>
+    <dt class="col-sm-3">Godina</dt>
+    <dd class="col-sm-9">@Model.GodinaProizvodnje</dd>
+    <dt class="col-sm-3">Registracija</dt>
+    <dd class="col-sm-9">@Model.RegistarskaOznaka</dd>
+</dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Obrisi</button>
+    @Html.ActionLink("Odustani", "Index", null, new { @class = "btn btn-secondary ms-2" })
+}

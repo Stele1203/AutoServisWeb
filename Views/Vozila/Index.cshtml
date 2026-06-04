@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AutoServisWeb.Models.Vozila>
+@{
+    ViewBag.Title = "Vozila";
+    bool isAdmin = (Session["UlogaID"] as int?) == 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Vozila</h2>
+    @if (isAdmin)
+    {
+        @Html.ActionLink("+ Dodaj vozilo", "Create", null, new { @class = "btn btn-primary" })
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema unesenih vozila.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var v in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <strong>@(v.Marke != null ? v.Marke.NazivMarke : "") @v.Model</strong>
+                        <span class="badge bg-secondary">@v.GodinaProizvodnje</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><span class="text-muted">Registracija:</span> <strong>@v.RegistarskaOznaka</strong></p>
+                        <p class="mb-1">
+                            <span class="text-muted">Vlasnik:</span>
+                            @(v.Korisnici != null ? v.Korisnici.Ime + " " + v.Korisnici.Prezime : "-")
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex gap-2">
+                        @Html.ActionLink("Detalji", "Details", new { id = v.VoziloID }, new { @class = "btn btn-sm btn-outline-info" })
+                        @if (isAdmin)
+                        {
+                            @Html.ActionLink("Uredi", "Edit", new { id = v.VoziloID }, new { @class = "btn btn-sm btn-outline-warning" })
+                            @Html.ActionLink("Obrisi", "Delete", new { id = v.VoziloID }, new { @class = "btn btn-sm btn-outline-danger" })
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,51 @@
+﻿@model AutoServisWeb.ViewModels.RegisterViewModel
+@{ ViewBag.Title = "Registracija"; }
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white text-center">
+                <h4 class="mb-0">Kreiranje naloga</h4>
+            </div>
+            <div class="card-body p-4">
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            @Html.LabelFor(m => m.Ime)
+                            @Html.TextBoxFor(m => m.Ime, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Ime, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            @Html.LabelFor(m => m.Prezime)
+                            @Html.TextBoxFor(m => m.Prezime, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Prezime, "", new { @class = "text-danger small" })
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "vas@email.com" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                    </div>
+                    <div class="mb-3">
+                        <label>Lozinka</label>
+                        @Html.PasswordFor(m => m.Lozinka, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Lozinka, "", new { @class = "text-danger small" })
+                    </div>
+                    <div class="mb-3">
+                        <label>Potvrda lozinke</label>
+                        @Html.PasswordFor(m => m.PotvrdaLozinke, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PotvrdaLozinke, "", new { @class = "text-danger small" })
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Registruj se</button>
+                }
+            </div>
+            <div class="card-footer text-center text-muted">
+                Vec imate nalog? @Html.ActionLink("Prijavite se", "Login", "Account")
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿@model AutoServisWeb.Models.Vozila
+@{
+    ViewBag.Title = "Detalji vozila";
+    bool isAdmin = (Session["UlogaID"] as int?) == 1;
+    string marka = Model.Marke != null ? Model.Marke.NazivMarke : "";
+}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <h2>@marka @Model.Model <small class="text-muted fs-5">(@Model.GodinaProizvodnje)</small></h2>
+    <span class="badge bg-dark fs-6">@Model.RegistarskaOznaka</span>
+</div>
+<hr />
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-muted text-uppercase small">Podaci o vozilu</h6>
+                <dl class="row mb-0">
+                    <dt class="col-5">Marka</dt>
+                    <dd class="col-7">@marka</dd>
+                    <dt class="col-5">Model</dt>
+                    <dd class="col-7">@Model.Model</dd>
+                    <dt class="col-5">Godina</dt>
+                    <dd class="col-7">@Model.GodinaProizvodnje</dd>
+                    <dt class="col-5">Registracija</dt>
+                    <dd class="col-7">@Model.RegistarskaOznaka</dd>
+                    <dt class="col-5">Broj sasije</dt>
+                    <dd class="col-7">@(Model.BrojSasije ?? "-")</dd>
+                    <dt class="col-5">Vlasnik</dt>
+                    <dd class="col-7">@(Model.Korisnici != null ? Model.Korisnici.Ime + " " + Model.Korisnici.Prezime : "-")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mt-4">Istorija servisa</h5>
+@if (Model.Servisis != null && Model.Servisis.Any())
+{
+    <table class="table table-hover table-bordered table-sm">
+        <thead class="table-dark">
+            <tr><th>Datum</th><th>Kilometraza</th><th>Opis</th><th>Cijena (EUR)</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.Servisis.OrderByDescending(x => x.DatumServisa))
+            {
+                <tr>
+                    <td>@s.DatumServisa.ToString("dd.MM.yyyy")</td>
+                    <td>@s.Kilometraza km</td>
+                    <td>@s.OpisRadova</td>
+                    <td>@s.UkupnaCena.ToString("N2")</td>
+                    <td>@Html.ActionLink("Detalji", "Details", "Servis", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-info" })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{ <p class="text-muted">Nema evidentiranih servisa.</p>}
+
+<div class="mt-4 d-flex gap-2">
+    @if (isAdmin)
+    {
+        @Html.ActionLink("Uredi", "Edit", new { id = Model.VoziloID }, new { @class = "btn btn-warning" })
+    }
+    @Html.ActionLink("Nazad", "Index", null, new { @class = "btn btn-secondary" })
+</div>

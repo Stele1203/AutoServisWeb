@@ -1,0 +1,35 @@
+﻿@model AutoServisWeb.ViewModels.LoginViewModel
+@{ ViewBag.Title = "Prijava"; }
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white text-center">
+                <h4 class="mb-0">Prijava</h4>
+            </div>
+            <div class="card-body p-4">
+                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.ReturnUrl)
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "vas@email.com" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                    </div>
+                    <div class="mb-3">
+                        <label>Lozinka</label>
+                        @Html.PasswordFor(m => m.Lozinka, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Lozinka, "", new { @class = "text-danger small" })
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Prijavi se</button>
+                }
+            </div>
+            <div class="card-footer text-center text-muted">
+                Nemate nalog? @Html.ActionLink("Registrujte se", "Register", "Account")
+            </div>
+        </div>
+    </div>
+</div>
