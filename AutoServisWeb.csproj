@@ -219,6 +219,11 @@
     <Content Include="Views\Vozila\Create.cshtml" />
     <Content Include="Views\Vozila\Edit.cshtml" />
     <Content Include="Views\Vozila\Delete.cshtml" />
+    <Content Include="Views\Servis\Index.cshtml" />
+    <Content Include="Views\Servis\Details.cshtml" />
+    <Content Include="Views\Servis\Create.cshtml" />
+    <Content Include="Views\Servis\Edit.cshtml" />
+    <Content Include="Views\Servis\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

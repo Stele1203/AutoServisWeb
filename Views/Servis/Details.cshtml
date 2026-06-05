@@ -1,0 +1,120 @@
+﻿@model AutoServisWeb.Models.Servisi
+@{
+    ViewBag.Title = "Detalji servisa";
+    bool isAdmin = (Session["UlogaID"] as int?) == 1;
+    bool ulogovan = Session["KorisnikID"] != null;
+    string vozilo = Model.Vozila != null
+        ? (Model.Vozila.Marke != null ? Model.Vozila.Marke.NazivMarke + " " : "")
+          + Model.Vozila.Model + " (" + Model.Vozila.RegistarskaOznaka + ")"
+        : "-";
+}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <h2>Servis &mdash; @Model.DatumServisa.ToString("dd.MM.yyyy")</h2>
+    @if (Model.KategorijeServisa != null)
+    {
+        <span class="badge bg-dark fs-6">@Model.KategorijeServisa.NazivKategorije</span>
+    }
+</div>
+<hr />
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-muted text-uppercase small">Podaci o servisu</h6>
+                <dl class="row mb-0">
+                    <dt class="col-5">Vozilo</dt>
+                    <dd class="col-7">@vozilo</dd>
+                    <dt class="col-5">Mehanicar</dt>
+                    <dd class="col-7">@(Model.Mehanicari != null ? Model.Mehanicari.ImePrezime : "-")</dd>
+                    <dt class="col-5">Kilometraza</dt>
+                    <dd class="col-7">@Model.Kilometraza km</dd>
+                    <dt class="col-5">Opis radova</dt>
+                    <dd class="col-7">@Model.OpisRadova</dd>
+                    <dt class="col-5">Ukupna cijena</dt>
+                    <dd class="col-7"><strong class="text-success fs-5">@Model.UkupnaCena.ToString("N2") RSD</strong></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.ServisStavkes != null && Model.ServisStavkes.Any())
+{
+    <h5>Ugradeni dijelovi</h5>
+    <table class="table table-sm table-bordered mb-4">
+        <thead class="table-secondary">
+            <tr><th>Naziv</th><th>Proizvodjac</th><th>Kom.</th><th class="text-end">Ukupno (RSD)</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var ss in Model.ServisStavkes)
+            {
+                <tr>
+                    <td>@(ss.Delovi != null ? ss.Delovi.NazivDela : "-")</td>
+                    <td>@(ss.Delovi != null ? ss.Delovi.Proizvodjac : "-")</td>
+                    <td>@ss.Kolicina</td>
+                    <td class="text-end">@ss.UkupnoStavka?.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h5>Komentari (@(Model.Komentaris != null ? Model.Komentaris.Count : 0))</h5>
+
+@if (Model.Komentaris != null && Model.Komentaris.Any())
+{
+    <div class="mb-3">
+        @foreach (var k in Model.Komentaris.OrderByDescending(x => x.DatumKomentara))
+        {
+            <div class="card border-0 bg-light mb-2">
+                <div class="card-body py-2 px-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>@(k.Korisnici != null ? k.Korisnici.Ime + " " + k.Korisnici.Prezime : "Korisnik")</strong>
+                        <small class="text-muted">@k.DatumKomentara.ToString("dd.MM.yyyy HH:mm")</small>
+                    </div>
+                    <p class="mb-0 mt-1">@k.Tekst</p>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted small">Jos nema komentara.</p>
+}
+
+@if (ulogovan)
+{
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h6 class="card-title">Dodaj komentar</h6>
+            @using (Html.BeginForm("DodajKomentar", "Servis", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="servisId" value="@Model.ServisID" />
+                <div class="mb-2">
+                    <textarea name="tekst" class="form-control" rows="3"
+                              placeholder="Napisite vas komentar..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Objavi</button>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-muted small">
+        @Html.ActionLink("Prijavite se", "Login", "Account") da biste ostavili komentar.
+    </p>
+}
+
+<div class="d-flex gap-2 mt-3">
+    @if (isAdmin)
+    {
+        @Html.ActionLink("Uredi", "Edit", new { id = Model.ServisID }, new { @class = "btn btn-warning" })
+        @Html.ActionLink("Obrisi", "Delete", new { id = Model.ServisID }, new { @class = "btn btn-danger" })
+    }
+    @Html.ActionLink("Nazad", "Index", null, new { @class = "btn btn-secondary" })
+</div>

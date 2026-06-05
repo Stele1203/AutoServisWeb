@@ -1,0 +1,62 @@
+﻿@model IEnumerable<AutoServisWeb.Models.Servisi>
+@{
+    ViewBag.Title = "Servisi";
+    bool isAdmin = (Session["UlogaID"] as int?) == 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Servisi</h2>
+    @if (isAdmin)
+    {
+        @Html.ActionLink("+ Novi servis", "Create", null, new { @class = "btn btn-primary" })
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema evidentiranih servisa.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Datum</th>
+                    <th>Vozilo</th>
+                    <th>Kategorija</th>
+                    <th>Mehanicar</th>
+                    <th>Km</th>
+                    <th class="text-end">Cijena (RSD)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.DatumServisa.ToString("dd.MM.yyyy")</td>
+                        <td>@(s.Vozila != null ? s.Vozila.RegistarskaOznaka : "-")</td>
+                        <td>
+                            @if (s.KategorijeServisa != null)
+                            {
+                                <span class="badge bg-secondary">@s.KategorijeServisa.NazivKategorije</span>
+                            }
+                        </td>
+                        <td>@(s.Mehanicari != null ? s.Mehanicari.ImePrezime : "-")</td>
+                        <td>@s.Kilometraza</td>
+                        <td class="text-end fw-semibold">@s.UkupnaCena.ToString("N2")</td>
+                        <td class="text-end">
+                            @Html.ActionLink("Detalji", "Details", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-info" })
+                            @if (isAdmin)
+                            {
+                                @Html.ActionLink("Uredi", "Edit", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-warning" })
+                                @Html.ActionLink("Obrisi", "Delete", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-danger" })
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
