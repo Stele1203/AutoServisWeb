@@ -224,6 +224,17 @@
     <Content Include="Views\Servis\Create.cshtml" />
     <Content Include="Views\Servis\Edit.cshtml" />
     <Content Include="Views\Servis\Delete.cshtml" />
+    <Content Include="Views\Registracije\Index.cshtml" />
+    <Content Include="Views\Registracije\Create.cshtml" />
+    <Content Include="Views\Registracije\Edit.cshtml" />
+    <Content Include="Views\Registracije\Delete.cshtml" />
+    <Content Include="Views\Mehanicari\Index.cshtml" />
+    <Content Include="Views\Mehanicari\Details.cshtml" />
+    <Content Include="Views\Mehanicari\Create.cshtml" />
+    <Content Include="Views\Mehanicari\Edit.cshtml" />
+    <Content Include="Views\Mehanicari\Delete.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Views\Search\Quick.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

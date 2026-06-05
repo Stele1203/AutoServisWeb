@@ -1,0 +1,20 @@
+﻿@model AutoServisWeb.Models.Mehanicari
+@{ ViewBag.Title = "Obrisi mehanicara"; }
+
+<h2>Potvrda brisanja</h2>
+<hr />
+<p class="text-danger">Da li ste sigurni da zelite obrisati ovog mehanicara?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">Ime i prezime</dt>
+    <dd class="col-sm-9">@Model.ImePrezime</dd>
+    <dt class="col-sm-3">Telefon</dt>
+    <dd class="col-sm-9">@Model.Telefon</dd>
+</dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Obrisi</button>
+    @Html.ActionLink("Odustani", "Index", null, new { @class = "btn btn-secondary ms-2" })
+}

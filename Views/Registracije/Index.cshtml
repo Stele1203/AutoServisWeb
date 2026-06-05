@@ -1,0 +1,73 @@
+﻿@model IEnumerable<AutoServisWeb.Models.Registracije>
+@{
+    ViewBag.Title = "Registracije";
+    bool isAdmin = (Session["UlogaID"] as int?) == 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Registracije</h2>
+    @if (isAdmin)
+    {
+        @Html.ActionLink("+ Nova registracija", "Create", null, new { @class = "btn btn-primary" })
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Nema evidentiranih registracija.</div>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Vozilo</th>
+                <th>Datum isteka</th>
+                <th class="text-end">Cijena (RSD)</th>
+                <th class="text-center">Status</th>
+                @if (isAdmin)
+                {
+                    <th></th>
+}
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                bool expired = r.DatumIsteka < DateTime.Today;
+                bool soon = !expired && r.DatumIsteka < DateTime.Today.AddDays(30);
+                <tr class="@(expired ? "table-danger" : soon ? "table-warning" : "")">
+                    <td>
+                        @if (r.Vozila != null)
+                        {
+                            <strong>@r.Vozila.RegistarskaOznaka</strong>
+                            if (r.Vozila.Marke != null)
+                            {
+                                <text> &mdash; @r.Vozila.Marke.NazivMarke @r.Vozila.Model</text>
+                            }
+                        }
+                        else
+                        { <text>-</text>}
+                    </td>
+                    <td>@r.DatumIsteka.ToString("dd.MM.yyyy")</td>
+                    <td class="text-end">@r.CenaRegistracije.ToString("N2")</td>
+                    <td class="text-center">
+                        @if (expired)
+                        {<span class="badge bg-danger">Istekla</span> }
+                        else if (soon)
+                        { <span class="badge bg-warning text-dark">Uskoro istice</span> }
+                        else
+                        { <span class="badge bg-success">Aktivna</span>}
+                    </td>
+                    @if (isAdmin)
+                    {
+                        <td class="text-end">
+                            @Html.ActionLink("Uredi", "Edit", new { id = r.RegistracijaID }, new { @class = "btn btn-sm btn-outline-warning" })
+                            @Html.ActionLink("Obrisi", "Delete", new { id = r.RegistracijaID }, new { @class = "btn btn-sm btn-outline-danger" })
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

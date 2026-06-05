@@ -1,0 +1,29 @@
+﻿@model AutoServisWeb.Models.Mehanicari
+@{ ViewBag.Title = "Novi mehanicar"; }
+
+<h2>Dodaj mehanicara</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-5">
+            <div class="mb-3">
+                @Html.LabelFor(m => m.ImePrezime, "Ime i prezime")
+                @Html.EditorFor(m => m.ImePrezime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.ImePrezime, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Telefon)
+                @Html.EditorFor(m => m.Telefon, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.AdresaRadionice, "Adresa radionice")
+                @Html.EditorFor(m => m.AdresaRadionice, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <button type="submit" class="btn btn-primary">Sacuvaj</button>
+            @Html.ActionLink("Odustani", "Index", null, new { @class = "btn btn-secondary ms-2" })
+        </div>
+    </div>
+}

@@ -1,0 +1,31 @@
+﻿@model AutoServisWeb.Models.Registracije
+@{ ViewBag.Title = "Nova registracija"; }
+
+<h2>Dodaj registraciju</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-5">
+            <div class="mb-3">
+                @Html.LabelFor(m => m.VoziloID, "Vozilo")
+                @Html.DropDownList("VoziloID", null, "-- Odaberite vozilo --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.VoziloID, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.DatumIsteka, "Datum isteka")
+                @Html.EditorFor(m => m.DatumIsteka, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.ValidationMessageFor(m => m.DatumIsteka, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.CenaRegistracije, "Cijena registracije (RSD)")
+                @Html.EditorFor(m => m.CenaRegistracije, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.CenaRegistracije, "", new { @class = "text-danger small" })
+            </div>
+            <button type="submit" class="btn btn-primary">Sacuvaj</button>
+            @Html.ActionLink("Odustani", "Index", null, new { @class = "btn btn-secondary ms-2" })
+        </div>
+    </div>
+}

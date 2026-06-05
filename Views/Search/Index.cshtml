@@ -1,0 +1,104 @@
+﻿@model AutoServisWeb.ViewModels.SearchViewModel
+@{ ViewBag.Title = "Detaljna pretraga"; }
+
+<h2>Detaljna pretraga</h2>
+<hr />
+
+@using (Html.BeginForm("Index", "Search", FormMethod.Get))
+{
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Kljucna rijec</label>
+                    @Html.TextBoxFor(m => m.KljucnaRec, new { @class = "form-control", placeholder = "Model, registracija, opis..." })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Marka vozila</label>
+                    @Html.DropDownListFor(m => m.MarkaID, Model.Marke, "-- Sve marke --", new { @class = "form-select" })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Godina od</label>
+                    @Html.TextBoxFor(m => m.GodinaOd, new { @class = "form-control", placeholder = "npr. 2010" })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Godina do</label>
+                    @Html.TextBoxFor(m => m.GodinaDo, new { @class = "form-control", placeholder = "npr. 2024" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Kategorija servisa</label>
+                    @Html.DropDownListFor(m => m.KategorijaID, Model.Kategorije, "-- Sve kategorije --", new { @class = "form-select" })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Cijena od (RSD)</label>
+                    @Html.TextBoxFor(m => m.CenaOd, new { @class = "form-control", placeholder = "0" })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Cijena do (RSD)</label>
+                    @Html.TextBoxFor(m => m.CenaDo, new { @class = "form-control", placeholder = "99999" })
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-dark me-2 w-100">Pretrazi</button>
+                    <a href="@Url.Action("Index", "Search")" class="btn btn-outline-secondary w-100">Resetuj</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.PretrazivanjeIzvrseno)
+{
+    <h4>Vozila &mdash; @Model.VozilaRezultati.Count rezultata</h4>
+    @if (Model.VozilaRezultati.Any())
+    {
+        <table class="table table-hover table-bordered mb-4">
+            <thead class="table-dark">
+                <tr><th>Marka</th><th>Model</th><th>Godina</th><th>Registracija</th><th>Vlasnik</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model.VozilaRezultati)
+                {
+                    <tr>
+                        <td>@(v.Marke != null ? v.Marke.NazivMarke : "-")</td>
+                        <td>@v.Model</td>
+                        <td>@v.GodinaProizvodnje</td>
+                        <td>@v.RegistarskaOznaka</td>
+                        <td>@(v.Korisnici != null ? v.Korisnici.Ime + " " + v.Korisnici.Prezime : "-")</td>
+                        <td>@Html.ActionLink("Detalji", "Details", "Vozila", new { id = v.VoziloID }, new { @class = "btn btn-sm btn-outline-info" })</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">Nema vozila koja odgovaraju filterima.</p>
+    }
+
+    <h4>Servisi &mdash; @Model.ServisRezultati.Count rezultata</h4>
+    @if (Model.ServisRezultati.Any())
+    {
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+                <tr><th>Datum</th><th>Vozilo</th><th>Kategorija</th><th>Opis</th><th>Cijena</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.ServisRezultati)
+                {
+                    <tr>
+                        <td>@s.DatumServisa.ToString("dd.MM.yyyy")</td>
+                        <td>@(s.Vozila != null ? s.Vozila.RegistarskaOznaka : "-")</td>
+                        <td>@(s.KategorijeServisa != null ? s.KategorijeServisa.NazivKategorije : "-")</td>
+                        <td>@s.OpisRadova</td>
+                        <td>@s.UkupnaCena.ToString("N2") RSD</td>
+                        <td>@Html.ActionLink("Detalji", "Details", "Servis", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-info" })</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">Nema servisa koji odgovaraju filterima.</p>
+    }
+}
