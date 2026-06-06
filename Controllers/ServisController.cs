@@ -40,7 +40,7 @@ namespace AutoServisWeb.Controllers
         [AdminOnly]
         public ActionResult Create()
         {
-            ViewBag.VoziloID = new SelectList(db.Vozilas, "VoziloID", "RegistarskaOznaka");
+            ViewBag.VoziloID = new SelectList(db.Vozilas.Include(v => v.Marke).ToList(), "VoziloID", "RegistarskaOznaka");
             ViewBag.MehanicarID = new SelectList(db.Mehanicaris, "MehanicarID", "ImePrezime");
             ViewBag.KategorijaID = new SelectList(db.KategorijeServisas, "KategorijaID", "NazivKategorije");
             return View();
@@ -51,6 +51,10 @@ namespace AutoServisWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ServisID,VoziloID,MehanicarID,KategorijaID,DatumServisa,Kilometraza,OpisRadova,UkupnaCena")] Servisi servis)
         {
+            int minKm = PrethodnaKilometraza(servis.VoziloID, null);
+            if (servis.Kilometraza < minKm)
+                ModelState.AddModelError("Kilometraza", $"Kilometraža mora biti najmanje {minKm} km (prethodni servis).");
+
             if (ModelState.IsValid)
             {
                 db.Servisis.Add(servis);
@@ -72,6 +76,7 @@ namespace AutoServisWeb.Controllers
             ViewBag.VoziloID = new SelectList(db.Vozilas, "VoziloID", "RegistarskaOznaka", servis.VoziloID);
             ViewBag.MehanicarID = new SelectList(db.Mehanicaris, "MehanicarID", "ImePrezime", servis.MehanicarID);
             ViewBag.KategorijaID = new SelectList(db.KategorijeServisas, "KategorijaID", "NazivKategorije", servis.KategorijaID);
+            ViewBag.MinKilometraza = PrethodnaKilometraza(servis.VoziloID, servis.ServisID);
             return View(servis);
         }
 
@@ -80,6 +85,10 @@ namespace AutoServisWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ServisID,VoziloID,MehanicarID,KategorijaID,DatumServisa,Kilometraza,OpisRadova,UkupnaCena")] Servisi servis)
         {
+            int minKm = PrethodnaKilometraza(servis.VoziloID, servis.ServisID);
+            if (servis.Kilometraza < minKm)
+                ModelState.AddModelError("Kilometraza", $"Kilometraža mora biti najmanje {minKm} km (prethodni servis).");
+
             if (ModelState.IsValid)
             {
                 db.Entry(servis).State = EntityState.Modified;
@@ -89,6 +98,7 @@ namespace AutoServisWeb.Controllers
             ViewBag.VoziloID = new SelectList(db.Vozilas, "VoziloID", "RegistarskaOznaka", servis.VoziloID);
             ViewBag.MehanicarID = new SelectList(db.Mehanicaris, "MehanicarID", "ImePrezime", servis.MehanicarID);
             ViewBag.KategorijaID = new SelectList(db.KategorijeServisas, "KategorijaID", "NazivKategorije", servis.KategorijaID);
+            ViewBag.MinKilometraza = minKm;
             return View(servis);
         }
 
@@ -134,6 +144,16 @@ namespace AutoServisWeb.Controllers
                 db.SaveChanges();
             }
             return RedirectToAction("Details", new { id = servisId });
+        }
+
+        private int PrethodnaKilometraza(int? voziloId, int? izuzetServisId)
+        {
+            if (voziloId == null) return 0;
+            var query = db.Servisis.Where(s => s.VoziloID == voziloId);
+            if (izuzetServisId.HasValue)
+                query = query.Where(s => s.ServisID != izuzetServisId.Value);
+            var prethodni = query.OrderByDescending(s => s.Kilometraza).FirstOrDefault();
+            return prethodni?.Kilometraza ?? 0;
         }
 
         protected override void Dispose(bool disposing)

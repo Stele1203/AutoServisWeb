@@ -1,0 +1,37 @@
+﻿@model AutoServisWeb.Models.Korisnici
+@{ ViewBag.Title = "Uredi korisnika"; }
+
+<h2>Uredi korisnika</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.KorisnikID)
+    <div class="row">
+        <div class="col-md-5">
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Ime)
+                @Html.EditorFor(m => m.Ime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Ime, "", new { @class = "text-danger" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Prezime)
+                @Html.EditorFor(m => m.Prezime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Prezime, "", new { @class = "text-danger" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Email)
+                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.UlogaID, "Uloga")
+                @Html.DropDownList("UlogaID", null, "-- Odaberite ulogu --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.UlogaID, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-warning">Sačuvaj</button>
+            @Html.ActionLink("Odustani", "Korisnici", null, new { @class = "btn btn-secondary ms-2" })
+        </div>
+    </div>
+}

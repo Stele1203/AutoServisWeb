@@ -1,5 +1,7 @@
 ﻿@model AutoServisWeb.Models.Servisi
-@{ ViewBag.Title = "Uredi servis"; }
+@{
+    ViewBag.Title = "Uredi servis";
+}
 
 <h2>Uredi servis</h2>
 <hr />
@@ -13,22 +15,31 @@
             <div class="mb-3">
                 @Html.LabelFor(m => m.VoziloID, "Vozilo")
                 @Html.DropDownList("VoziloID", null, "-- Odaberite vozilo --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.VoziloID, "", new { @class = "text-danger" })
             </div>
             <div class="mb-3">
-                @Html.LabelFor(m => m.MehanicarID, "Mehanicar")
-                @Html.DropDownList("MehanicarID", null, "-- Odaberite mehanicara --", new { @class = "form-select" })
+                @Html.LabelFor(m => m.MehanicarID, "Mehaničar")
+                @Html.DropDownList("MehanicarID", null, "-- Odaberite mehaničara --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.MehanicarID, "", new { @class = "text-danger" })
             </div>
             <div class="mb-3">
                 @Html.LabelFor(m => m.KategorijaID, "Kategorija")
                 @Html.DropDownList("KategorijaID", null, "-- Odaberite kategoriju --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.KategorijaID, "", new { @class = "text-danger" })
             </div>
             <div class="mb-3">
                 @Html.LabelFor(m => m.DatumServisa, "Datum servisa")
                 @Html.EditorFor(m => m.DatumServisa, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.ValidationMessageFor(m => m.DatumServisa, "", new { @class = "text-danger" })
             </div>
             <div class="mb-3">
-                @Html.LabelFor(m => m.Kilometraza, "Kilometraza")
-                @Html.EditorFor(m => m.Kilometraza, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.LabelFor(m => m.Kilometraza, "Kilometraža")
+                @Html.EditorFor(m => m.Kilometraza, new { htmlAttributes = new { @class = "form-control", min = ViewBag.MinKilometraza } })
+                @Html.ValidationMessageFor(m => m.Kilometraza, "", new { @class = "text-danger" })
+                @if (ViewBag.MinKilometraza != null && (int)ViewBag.MinKilometraza > 0)
+                {
+                    <small class="text-muted">Minimalna kilometraža (prethodni servis): @ViewBag.MinKilometraza km</small>
+                }
             </div>
             <div class="mb-3">
                 @Html.LabelFor(m => m.OpisRadova, "Opis radova")
@@ -37,8 +48,9 @@
             <div class="mb-3">
                 @Html.LabelFor(m => m.UkupnaCena, "Ukupna cijena (RSD)")
                 @Html.EditorFor(m => m.UkupnaCena, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.UkupnaCena, "", new { @class = "text-danger" })
             </div>
-            <button type="submit" class="btn btn-warning">Sacuvaj izmjene</button>
+            <button type="submit" class="btn btn-warning">Sačuvaj izmjene</button>
             @Html.ActionLink("Odustani", "Index", null, new { @class = "btn btn-secondary ms-2" })
         </div>
     </div>

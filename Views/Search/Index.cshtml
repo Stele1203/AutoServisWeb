@@ -1,7 +1,7 @@
 ﻿@model AutoServisWeb.ViewModels.SearchViewModel
-@{ ViewBag.Title = "Detaljna pretraga"; }
+@{ ViewBag.Title = "Pretraga"; }
 
-<h2>Detaljna pretraga</h2>
+<h2>Pretraga</h2>
 <hr />
 
 @using (Html.BeginForm("Index", "Search", FormMethod.Get))
@@ -11,7 +11,7 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Kljucna rijec</label>
-                    @Html.TextBoxFor(m => m.KljucnaRec, new { @class = "form-control", placeholder = "Model, registracija, opis..." })
+                    @Html.TextBoxFor(m => m.KljucnaRec, new { @class = "form-control", placeholder = "Registracija, model, sasija, opis..." })
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Marka vozila</label>
@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Godina od</label>
-                    @Html.TextBoxFor(m => m.GodinaOd, new { @class = "form-control", placeholder = "npr. 2010" })
+                    @Html.TextBoxFor(m => m.GodinaOd, new { @class = "form-control", placeholder = "npr. 2000" })
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Godina do</label>
@@ -48,57 +48,60 @@
 
 @if (Model.PretrazivanjeIzvrseno)
 {
-    <h4>Vozila &mdash; @Model.VozilaRezultati.Count rezultata</h4>
-    @if (Model.VozilaRezultati.Any())
-    {
-        <table class="table table-hover table-bordered mb-4">
-            <thead class="table-dark">
-                <tr><th>Marka</th><th>Model</th><th>Godina</th><th>Registracija</th><th>Vlasnik</th><th></th></tr>
-            </thead>
-            <tbody>
-                @foreach (var v in Model.VozilaRezultati)
-                {
-                    <tr>
-                        <td>@(v.Marke != null ? v.Marke.NazivMarke : "-")</td>
-                        <td>@v.Model</td>
-                        <td>@v.GodinaProizvodnje</td>
-                        <td>@v.RegistarskaOznaka</td>
-                        <td>@(v.Korisnici != null ? v.Korisnici.Ime + " " + v.Korisnici.Prezime : "-")</td>
-                        <td>@Html.ActionLink("Detalji", "Details", "Vozila", new { id = v.VoziloID }, new { @class = "btn btn-sm btn-outline-info" })</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p class="text-muted">Nema vozila koja odgovaraju filterima.</p>
-    }
+    <h5>Pronadjeno @Model.ServisRezultati.Count rezultata</h5>
 
-    <h4>Servisi &mdash; @Model.ServisRezultati.Count rezultata</h4>
-    @if (Model.ServisRezultati.Any())
+    if (Model.ServisRezultati.Any())
     {
-        <table class="table table-hover table-bordered">
-            <thead class="table-dark">
-                <tr><th>Datum</th><th>Vozilo</th><th>Kategorija</th><th>Opis</th><th>Cijena</th><th></th></tr>
-            </thead>
-            <tbody>
-                @foreach (var s in Model.ServisRezultati)
-                {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
                     <tr>
-                        <td>@s.DatumServisa.ToString("dd.MM.yyyy")</td>
-                        <td>@(s.Vozila != null ? s.Vozila.RegistarskaOznaka : "-")</td>
-                        <td>@(s.KategorijeServisa != null ? s.KategorijeServisa.NazivKategorije : "-")</td>
-                        <td>@s.OpisRadova</td>
-                        <td>@s.UkupnaCena.ToString("N2") RSD</td>
-                        <td>@Html.ActionLink("Detalji", "Details", "Servis", new { id = s.ServisID }, new { @class = "btn btn-sm btn-outline-info" })</td>
+                        <th>Vozilo</th>
+                        <th>Marka</th>
+                        <th>Registracija</th>
+                        <th>Datum servisa</th>
+                        <th>Kategorija</th>
+                        <th>Opis</th>
+                        <th class="text-end">Cijena (RSD)</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.ServisRezultati)
+                    {
+                        <tr>
+                            <td>
+                                @if (s.Vozila != null)
+                                {
+                                    @Html.ActionLink(s.Vozila.Model, "Details", "Vozila",
+                                        new { id = s.Vozila.VoziloID },
+                                        new { @class = "text-decoration-none fw-semibold" })
+                                }
+                                else
+                                { <text>-</text>}
+                            </td>
+                            <td>@(s.Vozila != null && s.Vozila.Marke != null ? s.Vozila.Marke.NazivMarke : "-")</td>
+                            <td><span class="badge bg-secondary">@(s.Vozila != null ? s.Vozila.RegistarskaOznaka : "-")</span></td>
+                            <td>@s.DatumServisa.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @if (s.KategorijeServisa != null)
+                                {<span class="badge bg-info text-dark">@s.KategorijeServisa.NazivKategorije</span>}
+                            </td>
+                            <td>@s.OpisRadova</td>
+                            <td class="text-end fw-semibold">@s.UkupnaCena.ToString("N2")</td>
+                            <td>
+                                @Html.ActionLink("Detalji", "Details", "Servis",
+                                    new { id = s.ServisID },
+                                    new { @class = "btn btn-sm btn-outline-info" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p class="text-muted">Nema servisa koji odgovaraju filterima.</p>
+        <div class="alert alert-info">Nema rezultata koji odgovaraju pretrazi.</div>
     }
 }

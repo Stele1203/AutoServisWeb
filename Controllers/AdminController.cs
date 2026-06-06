@@ -15,9 +15,7 @@ namespace AutoServisWeb.Controllers
 
         public ActionResult Korisnici()
         {
-            var korisnici = db.Korisnicis
-                .Include(k => k.Uloge)
-                .ToList();
+            var korisnici = db.Korisnicis.Include(k => k.Uloge).ToList();
             return View(korisnici);
         }
 
@@ -78,9 +76,7 @@ namespace AutoServisWeb.Controllers
         public ActionResult DeleteKorisnik(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var k = db.Korisnicis
-                .Include(x => x.Uloge)
-                .FirstOrDefault(x => x.KorisnikID == id);
+            var k = db.Korisnicis.Include(x => x.Uloge).FirstOrDefault(x => x.KorisnikID == id);
             if (k == null) return HttpNotFound();
             return View(k);
         }
@@ -95,6 +91,10 @@ namespace AutoServisWeb.Controllers
                 return RedirectToAction("Korisnici");
             }
             var k = db.Korisnicis.Find(id);
+
+            var komentari = db.Komentaris.Where(c => c.KorisnikID == id).ToList();
+            db.Komentaris.RemoveRange(komentari);
+
             db.Korisnicis.Remove(k);
             db.SaveChanges();
             return RedirectToAction("Korisnici");

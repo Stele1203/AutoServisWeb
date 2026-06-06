@@ -19,8 +19,9 @@ namespace AutoServisWeb
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+            var bootstrapBundle = new Bundle("~/bundles/bootstrap");
+            bootstrapBundle.Include("~/Scripts/bootstrap.bundle.min.js");
+            bundles.Add(bootstrapBundle);
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

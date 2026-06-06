@@ -1,0 +1,25 @@
+﻿@model AutoServisWeb.Models.Korisnici
+@{ ViewBag.Title = "Obrisi korisnika"; }
+
+<h2>Brisanje korisnika</h2>
+<hr />
+
+<div class="alert alert-danger">
+    Da li ste sigurni da želite obrisati korisnika <strong>@Model.Ime @Model.Prezime</strong>?
+</div>
+
+<dl class="row col-md-5">
+    <dt class="col-sm-4">Ime i prezime</dt>
+    <dd class="col-sm-8">@Model.Ime @Model.Prezime</dd>
+    <dt class="col-sm-4">Email</dt>
+    <dd class="col-sm-8">@Model.Email</dd>
+    <dt class="col-sm-4">Uloga</dt>
+    <dd class="col-sm-8">@Model.Uloge?.NazivUloge</dd>
+</dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Da, obriši</button>
+    @Html.ActionLink("Odustani", "Korisnici", null, new { @class = "btn btn-secondary ms-2" })
+}

@@ -19,7 +19,8 @@ namespace AutoServisWeb.Controllers
                 .Include(v => v.Marke)
                 .Where(v => v.RegistarskaOznaka.Contains(q)
                          || v.Model.Contains(q)
-                         || v.Marke.NazivMarke.Contains(q))
+                         || v.Marke.NazivMarke.Contains(q)
+                         || v.BrojSasije.Contains(q))
                 .ToList();
 
             var servisi = db.Servisis
@@ -51,58 +52,42 @@ namespace AutoServisWeb.Controllers
                     Text = k.NazivKategorije
                 }).ToList();
 
-            if (!string.IsNullOrWhiteSpace(model.KljucnaRec)
-                || model.MarkaID.HasValue
-                || model.GodinaOd.HasValue
-                || model.GodinaDo.HasValue
-                || model.KategorijaID.HasValue
-                || model.CenaOd.HasValue
-                || model.CenaDo.HasValue)
-            {
-                model.PretrazivanjeIzvrseno = true;
+            model.PretrazivanjeIzvrseno = true;
 
-                var vozila = db.Vozilas
-                    .Include(v => v.Marke)
-                    .Include(v => v.Korisnici)
-                    .AsQueryable();
+            var servisi = db.Servisis
+                .Include(s => s.Vozila.Marke)
+                .Include(s => s.Vozila.Korisnici)
+                .Include(s => s.KategorijeServisa)
+                .Include(s => s.Mehanicari)
+                .AsQueryable();
 
-                if (!string.IsNullOrWhiteSpace(model.KljucnaRec))
-                    vozila = vozila.Where(v =>
-                        v.Model.Contains(model.KljucnaRec) ||
-                        v.RegistarskaOznaka.Contains(model.KljucnaRec) ||
-                        v.Marke.NazivMarke.Contains(model.KljucnaRec));
+            if (!string.IsNullOrWhiteSpace(model.KljucnaRec))
+                servisi = servisi.Where(s =>
+                    s.Vozila.RegistarskaOznaka.Contains(model.KljucnaRec) ||
+                    s.Vozila.Model.Contains(model.KljucnaRec) ||
+                    s.Vozila.Marke.NazivMarke.Contains(model.KljucnaRec) ||
+                    s.Vozila.BrojSasije.Contains(model.KljucnaRec) ||
+                    s.OpisRadova.Contains(model.KljucnaRec));
 
-                if (model.MarkaID.HasValue)
-                    vozila = vozila.Where(v => v.MarkaID == model.MarkaID);
+            if (model.MarkaID.HasValue)
+                servisi = servisi.Where(s => s.Vozila.MarkaID == model.MarkaID);
 
-                if (model.GodinaOd.HasValue)
-                    vozila = vozila.Where(v => v.GodinaProizvodnje >= model.GodinaOd);
+            if (model.GodinaOd.HasValue)
+                servisi = servisi.Where(s => s.Vozila.GodinaProizvodnje >= model.GodinaOd);
 
-                if (model.GodinaDo.HasValue)
-                    vozila = vozila.Where(v => v.GodinaProizvodnje <= model.GodinaDo);
+            if (model.GodinaDo.HasValue)
+                servisi = servisi.Where(s => s.Vozila.GodinaProizvodnje <= model.GodinaDo);
 
-                model.VozilaRezultati = vozila.ToList();
+            if (model.KategorijaID.HasValue)
+                servisi = servisi.Where(s => s.KategorijaID == model.KategorijaID);
 
-                var servisi = db.Servisis
-                    .Include(s => s.Vozila.Marke)
-                    .Include(s => s.KategorijeServisa)
-                    .Include(s => s.Mehanicari)
-                    .AsQueryable();
+            if (model.CenaOd.HasValue)
+                servisi = servisi.Where(s => s.UkupnaCena >= model.CenaOd);
 
-                if (!string.IsNullOrWhiteSpace(model.KljucnaRec))
-                    servisi = servisi.Where(s => s.OpisRadova.Contains(model.KljucnaRec));
+            if (model.CenaDo.HasValue)
+                servisi = servisi.Where(s => s.UkupnaCena <= model.CenaDo);
 
-                if (model.KategorijaID.HasValue)
-                    servisi = servisi.Where(s => s.KategorijaID == model.KategorijaID);
-
-                if (model.CenaOd.HasValue)
-                    servisi = servisi.Where(s => s.UkupnaCena >= model.CenaOd);
-
-                if (model.CenaDo.HasValue)
-                    servisi = servisi.Where(s => s.UkupnaCena <= model.CenaDo);
-
-                model.ServisRezultati = servisi.ToList();
-            }
+            model.ServisRezultati = servisi.OrderByDescending(s => s.DatumServisa).ToList();
 
             return View(model);
         }
